@@ -1,74 +1,427 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html><html><head><meta charset=utf-8><title>Hackris</title><link rel=stylesheet href="static/hackris.css"><link rel="shortcut icon" href=favicon.webp type="image/webp" sizes=128x128><body><div id=opening><h1 id=opening_message>Imagentleman presents</h1></div><div id=logo><h1 class="quicksand logo"><span id=hackr>Hackr</span><span id=is>is<span></span></span></h1><span class=opening_tip>Press any key to continue</span> <span class="opening_tip ddd">Best viewed on fullscreen (press F11)</span></div><header id=header><div id=player_header></div><div id=top><span id=top_logo class=quicksand>Hackris</span> <span id=top_level class=quicksand></span></div><div id=bot_header></div></header><div id=playground class=slideleft><pre id=copy_pre><code id=copy></code></pre><div id=terminal></div></div><div id=bot_force class=slideright><pre id=bot_copy_pre><code id=bot_copy></code></pre><div id=bot_terminal></div></div><div id=data><pre id=1 style=display:none>
+<code class=language-python>import re, collections
+// This is Peter Norvig's 21 line spelling corrector
+// norvig.com/spell-correct.html
+def words(text): return re.findall('[a-z]+', text.lower())
 
-  <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Hackris : " />
+def train(features):
+    model = collections.defaultdict(lambda: 1)
+    for f in features:
+        model[f] += 1
+    return model
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+NWORDS = train(words(file('big.txt').read()))
 
-    <title>Hackris</title>
-  </head>
+alphabet = 'abcdefghijklmnopqrstuvwxyz'
 
-  <body>
+def edits1(word):
+   splits     = [(word[:i], word[i:]) for i in range(len(word) + 1)]
+   deletes    = [a + b[1:] for a, b in splits if b]
+   transposes = [a + b[1] + b[0] + b[2:] for a, b in splits if len(b)>1]
+   replaces   = [a + c + b[1:] for a, b in splits for c in alphabet if b]
+   inserts    = [a + c + b     for a, b in splits for c in alphabet]
+   return set(deletes + transposes + replaces + inserts)
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/imagentleman/hackris">View on GitHub</a>
+def known_edits2(word):
+    return set(e2 for e1 in edits1(word) for e2 in edits1(e1) if e2 in NWORDS)
 
-          <h1 id="project_title">Hackris</h1>
-          <h2 id="project_tagline"></h2>
+def known(words): return set(w for w in words if w in NWORDS)
 
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/imagentleman/hackris/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/imagentleman/hackris/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
+def correct(word):
+    candidates = known([word]) or known(edits1(word)) or known_edits2(word) or [word]
+    return max(candidates, key=NWORDS.get)
+</code></pre><pre id=2 style=display:none>
+<code class=language-python>import re
 
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <h3>Welcome to GitHub Pages.</h3>
+def words(text): return re.findall("[a-z]+", text)</code>
+</pre><pre id=3 style=display:none>
+<code>Morpheus: I know *exactly* what you mean. Let me tell you why you're here. You're here because you know something. What you know you can't explain, but you feel it. You've felt it your entire life, that there's something wrong with the world. You don't know what it is, but it's there, like a splinter in your mind, driving you mad. It is this feeling that has brought you to me. Do you know what I'm talking about?
+Neo: The Matrix.</code>
+</pre><pre id=4 style=display:none>
+<code>I know what you're thinking, 'cause right now I'm thinking the same thing. Actually, I've been thinking it ever since I got here: Why oh why didn't I take the BLUE pill? </code>
+</pre><pre id=5 style=display:none>
+<code>I know you're out there. I can feel you now. I know that you're afraid... you're afraid of us. You're afraid of change. I don't know the future. I didn't come here to tell you how this is going to end. I came here to tell you how it's going to begin. I'm going to hang up this phone, and then I'm going to show these people what you don't want them to see. I'm going to show them a world without you. A world without rules and controls, without borders or boundaries. A world where anything is possible. Where we go from there is a choice I leave to you. </code>
+</pre><pre id=6 style=display:none>
+<code>Neo: I know kung fu.
+Morpheus: [eyeing him, hand on chin] Show me. </code>
+</pre><pre id=7 style=display:none>
+<code>What is "real"? How do you define "real"? If real is what you can feel, smell, taste and see, then 'real' is simply electrical signals interpreted by your brain.</code>
+</pre><pre id=8 style=display:none>
+<code>"Typing is no substitute for thinking." Dartmouth Basic manual, 1964.</code>
+</pre><pre id=9 style=display:none>
+<code>"The cheapest, fastest, and most reliable components are those that aren’t there." Gordon Bell</code>
+</pre><pre id=10 style=display:none>
+<code>"One of my most productive days was throwing away 1000 lines of code." Ken Thompson</code>
+</pre><pre id=11 style=display:none>
+<code>"The most effective debugging tool is still careful thought, coupled with judiciously placed print statements." Brian W. Kernighan</code>
+</pre><pre id=12 style=display:none>
+<code>"Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it." Brian W. Kernighan</code>
+</pre><pre id=13 style=display:none>
+<code>"OOP is to writing a program, what going through airport security is to flying." Richard Mansfield</code>
+</pre><pre id=14 style=display:none>
+<code>"I will, in fact, claim that the difference between a bad programmer and a good one is whether he considers his code or his data structures more important. Bad programmers worry about the code. Good programmers worry about data structures and their relationships." Linus Torvalds</code>
+</pre><pre id=15 style=display:none>
+<code>"It should be noted that no ethically-trained software engineer would ever consent to write a DestroyBaghdad procedure. Basic professional ethics would instead require him to write a DestroyCity procedure, to which Baghdad could be given as a parameter." Nathaniel Borenstein</code>
+</pre><pre id=16 style=display:none>
+<code>"Applications programming is a race between software engineer, who strive to produce idiot-proof programs, and the universe which strives to produce bigger idiots. So far the Universe is winning." Rick Cook</code>
+</pre><pre id=17 style=display:none>
+<code>"To me programming is more than an important practical art. It is also a gigantic undertaking in the foundations of knowledge." Grace Hopper</code>
+</pre><pre id=18 style=display:none>
+<code>"Programming: when the ideas turn into the real things." Maciej Kaczmarek</code>
+</pre><pre id=19 style=display:none>
+<code>"Most software today is very much like an Egyptian pyramid with millions of bricks piled on top of each other, with no structural integrity, but just done by brute force and thousands of slaves." Alan Kay</code>
+</pre><pre id=20 style=display:none>
+<code>"Premature optimization is the root of all evil." Don Knuth</code>
+</pre><pre id=21 style=display:none>
+<code>"Software and cathedrals are much the same – first we build them, then we pray." Sam Redwine</code>
+</pre><pre id=22 style=display:none>
+<code>"Real Programmers always confuse Christmas and Halloween because Oct31 == Dec25." Andrew Rutherford</code>
+</pre><pre id=23 style=display:none>
+<code>"One day my daughter came in, looked over my shoulder at some Perl 4 code, and said, "What is that, swearing?" Larry Wall</code>
+</pre><pre id=24 style=display:none>
+<code>Zawinski's Law: Every program attempts to expand until it can read mail. Those programs which cannot so expand are replaced by ones which can.</code>
+</pre><pre id=25 style=display:none>
+<code>"Testing can only prove the presence of bugs, not their absence." Edsger W. Dijkstra</code>
+</pre><pre id=26 style=display:none>
+<code>Any release date that includes more than one potential month isn’t going to be hit.</code>
+</pre><pre id=27 style=display:none>
+<code>"Being a nobody in a place where everybody thinks they can be a somebody is infectious... is exciting... i want that... for me." Freddie Lyon</code>
+</pre><pre id=28 style=display:none>
+<code>"It is a riddle, wrapped in a mystery, inside an enigma." Winston Churchill</code>
+</pre><pre id=29 style=display:none>
+<code>Steve Jobs on computers: "They are a bycicle for the mind..."</code>
+</pre><pre id=30 style=display:none>
+<code>H.G. Wells on education: "Civilization is a race between education and catastrophe..."</code>
+</pre><pre id=31 style=display:none>
+<code>Had I the heavens’ embroidered cloths,
+Enwrought with golden and silver light,
+The blue and the dim and the dark cloths
+Of night and light and the half light,
+I would spread the cloths under your feet:
+But I, being poor, have only my dreams;
+I have spread my dreams under your feet;
+Tread softly because you tread on my dreams.</code>
+</pre><pre id=32 style=display:none>
+<code>"I don't like puzzles
+it's an oportunity for the clever to feel clever
+and for the stupid to feel stupid." Rina</code>
+</pre><pre id=33 style=display:none>
+<code>"Children begin by loving their parents; as they grow older they judge them; sometimes, they forgive them" Oscar Wilde</code>
+</pre><pre id=34 style=display:none>
+<code>Stephen Hawking on fate: "It's amazing that people believe everything is predestined but they still look both ways when crossing the road."</code>
+</pre><pre id=35 style=display:none>
+<code>"You know you're in love when you can't fall asleep because reality is finally better than your dreams." Dr. Seuss</code>
+</pre><pre id=36 style=display:none>
+<code>Mark Twain on education: "I never let my schooling get in the way of my education."</code>
+</pre><pre id=37 style=display:none>
+<code>Questions only lead to answers... what's the fun in that?</code>
+</pre><pre id=38 style=display:none>
+<code>"Nothing in the universe is static
+everything is moving forward
+it can't help it
+any ideology that sort of says
+we are at the end of discovery about this thing
+i always go... well there is absolute no evidence to suggest that's true
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+We are always in essence at the beginning of infinity...
+no matter what we are talking about
+there is always one iteration, there always will be
+that's the fun of it." Steven Soderbergh</code>
+</pre><pre id=39 style=display:none>
+<code>"Never forget what you are. The rest of the world will not. Wear it like armor, and it can never be used to hurt you." Tyrion Lannister</code>
+</pre><pre id=40 style=display:none>
+<code>"Unless someone like you
+cares a whole awful lot,
+nothing is going to get better.
+it's not." Dr. Seuss</code>
+</pre><pre id=41 style=display:none>
+<code>"Sometimes bad things fall apart so better things can fall together" Marilyn Monroe</code>
+</pre><pre id=42 style=display:none>
+<code>"The best way to predict the future is to invent it." Alan Kay</code>
+</pre><pre id=43 style=display:none>
+<code>"I know so much that i don't know where to begin..." James Stevenson</code>
+</pre><pre id=44 style=display:none>
+<code>"To his dog, every man is King; hence the constant popularity of dogs." Aldous Huxley</code>
+</pre><pre id=45 style=display:none>
+<code>Oh, the places you'll go! There is fun to be done! There are points to be scored. There are games to be won. And the magical things you can do with that ball will make you the winningest winner of all. Fame! You'll be famous as famous can be, with the whole wide world watching you win on TV.
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
+Except when they don't. Because, sometimes, they won't. I'm afraid that some times you'll play lonely games too. Games you can't win 'cause you'll play against you.</code>
+</pre><pre id=46 style=display:none>
+<code>"If you torture the data long enough, it will confess to anything."</code>
+</pre><pre id=47 style=display:none>
+<code>Voltaire on perfectionism: "the best is the worst enemy of the good..."</code>
+</pre><pre id=48 style=display:none>
+<code>Hemingway on bankrupcy:
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+Eric Hellman traced it back to Hemingway's The Sun Also Rises. The full quote:
 
-<h3>Designer Templates</h3>
+"How did you go bankrupt?"
+"Two ways. Gradually, then suddenly."</code>
+</pre><pre id=49 style=display:none>
+<code>Piet Hein on decissions:
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
+Whenever you're called on to make up your mind,
+and you're hampered by not having any,
+the best way to solve the dilemma, you'll find,
+is simply by spinning a penny.
+No -- not so that chance shall decide the affair
+while you're passively standing there moping;
+but the moment the penny is up in the air,
+you suddenly know what you're hoping.</code>
+</pre><pre id=50 style=display:none>
+<code>Stephen Covey on decissions:
+If you want to fill a bucket... put big rocks first... the small ones will fill in the gaps...
+If you put the small ones first... there won't we room for the big ones at the end...
+It means... you should do the important things first... the big things...</code>
+</pre><pre id=51 style=display:none>
+<code>Plato on kindness: "Be kind, for everyone you meet is fighting a hard battle."</code>
+</pre><pre id=52 style=display:none>
+<code>there is only a way to get birth but a million ways to die...</code>
+</pre><pre id=53 style=display:none>
+<code>Marcos Aurelius on heaven and god:
+"Live a good life. If there are gods and they are just, then they will not care how devout you have been, but will welcome you based on the virtues you have lived by. If there are gods, but unjust, then you should not want to worship them. If there are no gods, then you will be gone, but will have lived a noble life that will live on in the memories of your loved ones."</code>
+</pre><pre id=54 style=display:none>
+<code>"That adults are not all they're cracked up to be. And most of them are wrong most of the time. This can be quite revelatory for a kid - often launching them on a personal quest of exploration, rather than of Q and A sessions with their parents." Neil Degrasse Tyson</code>
+</pre><pre id=55 style=display:none>
+<code>"The problem, often not discovered until late in life, is that when you look for things in life like love, meaning, motivation, it implies they are sitting behind a tree or under a rock. The most successful people in life recognize, that in life they create their own love, they manufacture their own meaning, they generate their own motivation.
 
-<h3>Rather Drive Stick?</h3>
+For me, I am driven by two main philosophies, know more today about the world than I knew yesterday. And lessen the suffering of others. You'd be surprised how far that gets you.
+" Neil Degrasse Tyson</code>
+</pre><pre id=56 style=display:none>
+<code>Hal Abelson on computer science:
+"As opose to other kinds of engineering where the constraints of what you can build are the constraints of a physical systems... the constraints impose in building large software systems are the limitation of our own mind..."</code>
+</pre><pre id=57 style=display:none>
+<code>Epiphany is not the same as absolution... your punishment stands.</code>
+</pre><pre id=58 style=display:none>
+<code>the things that scare us
+are the things that keep us human
+don't ever be afraid of being scared
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+just don't allow being scared
+to dictate the choices you make</code>
+</pre><pre id=59 style=display:none>
+<code>"Anti-intellectualism has been a constant thread winding its way through our political and cultural life, nurtured by the false notion that democracy means that 'my ignorance is just as good as your knowledge." Isaac Asimov</code>
+</pre><pre id=60 style=display:none>
+<code>Koi No Yokan (Japanese) is the sense upon first meeting a person that the two of you are going to fall into love.</code>
+</pre><pre id=61 style=display:none>
+<code>Hitchen's Razor: What can be asserted without evidence
+can be dismissed without evidence.</code>
+</pre><pre id=62 style=display:none>
+<code>"Having kids is a way of achieving something without having any talent at all..." Mitchell and Webb</code>
+</pre><pre id=63 style=display:none>
+<code>"In the end, a vision without the ability to execute it is probably an hallucination." Steve Case</code>
+</pre><pre id=64 style=display:none>
+<code>"A human being should be able to change a diaper, plan an invasion, butcher a hog, conn a ship, design a building, write a sonnet, balance accounts, build a wall, set a bone, comfort the dying, take orders, give orders, cooperate, act alone, solve equations, analyze a new problem, pitch manure, program a computer, cook a tasty meal, fight efficiently, die gallantly. Specialization is for insects." Robert A. Heinlein</code>
+</pre><pre id=65 style=display:none>
+<code>"When early explorers first set out west across the atlantic
+most people thought the world was flat
+most people thought if you sail far enough west you would drop off a plane
+and nothing
+these vessels sailing out into the unknown they were not carrying noble man
+or aristocrats, artists, merchants...
+they were crewed by people living on the edge of live
+madman, orphans, ex-convicts, outcasts, like myself
+as a fellon, i'm an unlikely candidate for most things, but perhaps not for this, perhaps i'm the most likely...</code>
+</pre><pre id=66 style=display:none>
+<code>Persons of Interest on love: "Is finding the persons that connects you to the world..."</code>
+</pre><pre id=67 style=display:none>
+<code>One grandfather on love: "I just wanted you to know that at this moment i was thinking more about you than anyone or anything else."</code>
+</pre><pre id=68 style=display:none>
+<code>"A designer knows he has achieved perfection not when there is nothing left to add, but when there is nothing left to take away." – Antoine de Saint-Exupery.</code>
+</pre><pre id=69 style=display:none>
+<code>Little black dress on life and dreams:
 
-<h3>Authors and Contributors</h3>
+resignation, independence...
+and today, my 10th drama contest entry failed
+i probably have many more failures lined up
+but 25 is a great age to dream and to challenge ourselves
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+and right now...
+i'm at the center of my life</code>
+</pre><pre id=70 style=display:none>
+<code>Camelot on death:
 
-<h3>Support or Contact</h3>
+we all have our own ideas of what death might be
+for all we know,
+death could be the greatest good that could happen to us
+Cicero said, "the life of the dead is placed in the memories of the living"
 
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
-      </section>
-    </div>
+the love we feel in life
+keeps people alive beyond their time</code>
+</pre><pre id=71 style=display:none>
+<code>"we just grow old... but our baby will grow up..." sick cancer mom from Hello Ghost</code>
+</pre><pre id=72 style=display:none>
+<code>Henry Ford on inventions:
 
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Hackris maintained by <a href="https://github.com/imagentleman">imagentleman</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
+I invented nothing new.
 
-    
+I simply assembled the discoveries of other
+men behind whom were centuries of work.
+Had i worked fifty or ten or even five years
+before, i would have failed.
 
-  </body>
-</html>
+So it is with every new thing,
+Progress happens when all the
+factors that make for it are ready,
+and then it is inevitable.
+
+To teach that a comparatively few
+men are responsible for the greatest
+forward steps of mankind is the
+worst sort of nonsense.</code>
+</pre><pre id=73 style=display:none>
+<code>Iniesta on happiness:
+nada es mas gratificante en esta vida que hacer feliz a alguien...</code>
+</pre><pre id=74 style=display:none>
+<code>Dying Eko from Lost
+I didn't ask for the life i was given...
+but it was given nonetheless...
+and with it, i did my best.</code>
+</pre></div><pre id=75 style=display:none>
+<code>Gabe Newell on management:
+Management is not a career path is a skill.
+The notion of a manager being someone higher in a hierarchical structure with decission power is wrong.
+A manager's job is to make his team as productive as possible. the end.</code>
+</pre><pre id=76 style=display:none>
+<code>Beauty and the beast on break-ups:
+If you've been long enough with someone, when they're gone you start questioning who you really are (without them).</code>
+</pre><pre id=77 style=display:none>
+<code>Kurzweil on diet pills:
+All diet drugs on the market today work by inhibiting the appetite
+which is not really what we want
+it's kind of like a birth control pill that works by inhibiting interest in sex.</code>
+</pre><pre id=78 style=display:none>
+<code>C. S. Lewis on childish things:
+When I was ten, I read fairy tales in secret and would have been ashamed if I had been found doing so. Now that I am fifty, I read them openly. When I became a man I put away childish things, including the fear of childishness and the desire to be very grown up.</code>
+</pre><pre id=79 style=display:none>
+<code>Linus Torvals on perfectionism:
+"To some degree people say that you should not micro-optimise, but if you love micro-optimisation, that's what you should do."</code>
+</pre><pre id=80 style=display:none>
+<code>Bill Cosby on grandmothers:
+My children love my mother,
+and i tell my children
+that's not the same woman i grew up with...
+that's an old woman trying to get into heaven now.</code>
+</pre><pre id=81 style=display:none>
+<code>Elementary on stats:
+A famous statistician once stated
+that while the individual man is an insolvable puzzle
+in the aggregate he becomes a mathematical certainty
+you can for example never foretell what any one man would do
+but you can with precision say what an average man will be up to
+individuals vary
+percentages remain constant
+so says the statistician
+i'm not an average man.
+
+William Winwood Reade (is the statistician)</code>
+</pre><pre id=82 style=display:none>
+<code>Moteki on women:
+Are you gonna give up?
+if she doesn't have a boyfriend...
+then all the men in the world are your rivals.
+but then...
+if she does have a boyfriend...
+you'll only have one rival.
+
+you and this miyuki...
+it could be destiny!</code>
+</pre><pre id=83 style=display:none>
+<code>On the road on people:
+The only people for me are the mad ones, the ones who are mad to live, mad to talk, mad to be saved, desirous of everything at the same time, the ones that never yawn or say a commonplace thing, but burn, burn, burn like fabulous yellow roman candles exploding like spiders across the stars and in the middle you see the blue centerlight pop and everybody goes "Awww!"</code>
+</pre><pre id=84 style=display:none>
+<code>Paul Buchneit on life:
+Is this how I want to spend the rest of my life?
+
+The answers can be surprising. Cleaning the kitchen is relaxing, and it creates a pleasant and healthy space for my family and friends to gather. Not a bad way to live. But sitting in a windowless conference room while people I don't really love debate things that I don't really care about? No, that's not how I want to spend my life. Of course others may find meaning in that. It's very much a personal decision.</code>
+</pre><pre id=85 style=display:none>
+<code>David Bowie on good bands:
+Somebody once said the velvet underground didn't sell many albums... but everybody that bought a velvet underground album formed a band... and i would have to suggest that the same happened with the pixies...</code>
+</pre><pre id=86 style=display:none>
+<code>Sonmi on death:
+I believe death is only a door; when it closes another opens... if i cared to imagine heaven, i would imagine a door opening and behind it... i would find him there. Waiting for me.</code>
+</pre><pre id=87 style=display:none>
+<code>Horace principle on datelines:
+Any release date that includes more than one potential month isn’t going to be hit.</code>
+</pre><pre id=88 style=display:none>
+<code>The hour on America:
+Being a nobody in a place where everybody thinks they can be a somebody is infectious... is exciting... i want that... for me.</code>
+</pre><pre id=89 style=display:none>
+<code>Oppenheimer citing baghavad gita:
+Now I am become Death, the destroyer of worlds.
+
+The Blessed Lord said: Time I am, destroyer of the worlds, and I have come to engage all people. With the exception of you, all the soldiers here on both sides will be slain.
+
+"if the radiance of a thousand suns were to burst at once into the sky, that would be like the splendor of the mighty one..."</code>
+</pre><pre id=90 style=display:none>
+<code>The science of sleep quotes:
+
+In dreams emotions are overwhelming
+
+no, hombre. no parla todo espagnolito at all.
+
+the brain is the most complex thing in the universe... and is right behind the nose
+
+why should i receive this present...
+for the ocation that you are pretty...
+
+Distraction is an obstruction for the construction.</code>
+</pre><pre id=91 style=display:none>
+<code>Einstein on war:
+I do not know with what weapons World War 3 will be fought, but World War 4 will be fought with sticks and stones.</code>
+</pre><pre id=92 style=display:none>
+<code>Little children quotes:
+Trying new things made him feel more alive...
+She wondered if brad was always this forthcoming. If anything, it seem a little lonely, all too ready to open his heart at the slightest sign of interest...</code>
+</pre><pre id=93 style=display:none>
+<code>Stranger than fiction quote:
+Ana Pascal: Did you like the cookies?
+Harold Crick: Yes. Thank you for forcing me to eat them.</code>
+</pre><pre id=94 style=display:none>
+<code>Chuno on hunting:
+You stick a pole upside down like this
+Then, the dhole smells
+the blood and goes crazy,
+and starts licking the blood on top.
+Like this.
+Just like this.
+It doesn't even realize it's
+piercing and cutting its tongue,
+and keeps licking.
+Not knowing it's now licking its own blood.</code>
+</pre><pre id=95 style=display:none>
+<code>Feynman on Truth:
+You can recognize truth by its beauty and simplicity.
+When you get it right, it is obvious that it is right.</code>
+</pre><pre id=96 style=display:none>
+<code>The road about his wife:
+
+If i were god
+i would've made the world just so
+and no different.
+
+And so i have you
+i have you.</code>
+</pre><pre id=97 style=display:none>
+<code>Tolkien on slackers:
+
+Not all those who wander are lost…</code>
+</pre><pre id=98 style=display:none>
+<code>Soichiro Honda on success:
+You can fail 100 times as long as you succeed once.</code>
+</pre><pre id=99 style=display:none>
+<code>Narayanan Krishnan on nutrition:
+
+So, the food will give them physical nutrition.
+The love and affection which you show, will give them mental nutrition.</code>
+</pre><pre id=100 style=display:none>
+<code>Douglas Adams on computer geeks:
+
+I think a nerd is a person who uses the telephone to talk to other people about telephones. And a computer nerd therefore is somebody who uses a computer in order to use a computer.</code>
+</pre><script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script><script src="static/hackris-2.js"></script><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-40495135-2', 'imagentleman.github.io');
+  ga('send', 'pageview');</script>
